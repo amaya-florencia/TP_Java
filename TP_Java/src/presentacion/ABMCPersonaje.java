@@ -14,6 +14,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JSpinner;
@@ -27,6 +28,10 @@ public class ABMCPersonaje extends JFrame {
 	private JTextField txtNombre;
 	private JTextField txtPuntosTotales;
 	private JTextField txtPuntosRestantes;
+	private JSpinner spnVida;
+	private JSpinner spnEnergia;
+	private JSpinner spnDefensa;
+	private JSpinner spnEvasion;
 
 	/**
 	 * Launch the application.
@@ -52,6 +57,7 @@ public class ABMCPersonaje extends JFrame {
 	 * Create the frame.
 	 */
 	private void initialize() {
+		
 		setTitle("ABM Personaje");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 386, 357);
@@ -63,6 +69,7 @@ public class ABMCPersonaje extends JFrame {
 		txtIdPersonaje = new JTextField();
 		txtIdPersonaje.setEditable(false);
 		txtIdPersonaje.setColumns(10);
+		
 		
 		JLabel lblNombre = new JLabel("Nombre");
 		txtNombre = new JTextField();
@@ -96,13 +103,12 @@ public class ABMCPersonaje extends JFrame {
 		
 		JButton btnEliminar = new JButton("Cancelar");
 		
-		JSpinner spnVida = new JSpinner();
-		
 		JSpinner spnEnergia = new JSpinner();
 		
 		JSpinner spnDefensa = new JSpinner();
 		
 		JSpinner spnEvasion = new JSpinner();
+		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -183,17 +189,15 @@ public class ABMCPersonaje extends JFrame {
 		contentPane.setLayout(gl_contentPane);
 	}
 	protected void agregar() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	public Personaje MapearDeFormulario(){
 		Personaje p = new Personaje();
 		p.setNombrePersonaje(this.txtNombre.getText());
-		p.setVida(this.)
-		p.setEnergia(p.getEnergia());
-		p.setDefensa(p.getDefensa());
-		p.setEvasion(p.getEvasion());	
-		spnVida
+		p.setVida(Integer.parseInt(this.spnVida.getValue().toString()));
+		p.setDefensa(Integer.parseInt(this.spnDefensa.getValue().toString()));
+		p.setEvasion(Integer.parseInt(this.spnEvasion.getValue().toString()));
 		return p;
 	}
 }
