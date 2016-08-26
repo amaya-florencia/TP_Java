@@ -1,6 +1,5 @@
 package entidades;
 
-public class Persona {
-	
+public class Ataque {
 
 }
