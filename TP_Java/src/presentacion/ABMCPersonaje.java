@@ -1,6 +1,5 @@
 package presentacion;
 
-
 import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 
@@ -14,18 +13,12 @@ import javax.swing.JTextField;
 import javax.swing.JSpinner;
 import javax.swing.JButton;
 
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.logging.Level;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
 import entidades.*;
 import negocio.*;
 import util.ApplicationException;
 import util.SuperLogger;
-
-
+import javax.swing.SpinnerNumberModel;
 
 public class ABMCPersonaje {
 	private CtrlABMCPersonaje ctrl;
@@ -38,9 +31,7 @@ public class ABMCPersonaje {
 	private JSpinner spVida;
 	private JSpinner spEnergia;
 	private JSpinner spDefensa;
-	private JSpinner spEvasion;
-
-	
+	private JSpinner spEvasion;	
 
 	/**
 	 * Launch the application.
@@ -59,7 +50,7 @@ public class ABMCPersonaje {
 	}
 	public ABMCPersonaje() {
 		initialize();
-		ctrl= new CtrlABMCPersonaje();
+		ctrl = new CtrlABMCPersonaje();
 	}
 	/**
 	 * 	 * Initialize the contents of the frame.
@@ -107,14 +98,15 @@ public class ABMCPersonaje {
 		frame.getContentPane().add(lblPuntosRestantes);
 		
 		txtIdPersonaje = new JTextField();
+		txtIdPersonaje.setEnabled(false);
 		txtIdPersonaje.setEditable(false);
 		txtIdPersonaje.setColumns(10);
-		txtIdPersonaje.setBounds(167, 11, 70, 15);
+		txtIdPersonaje.setBounds(107, 11, 130, 15);
 		frame.getContentPane().add(txtIdPersonaje);
 		
 		txtNombre = new JTextField();
 		txtNombre.setColumns(10); 
-		txtNombre.setBounds(167, 57, 70, 15);
+		txtNombre.setBounds(107, 57, 130, 15);
 		frame.getContentPane().add(txtNombre);
 
 		
@@ -130,35 +122,48 @@ public class ABMCPersonaje {
 		txtPuntosRestantes.setBounds(167, 333, 70, 15);
 		frame.getContentPane().add(txtPuntosRestantes);
 		
-		JSpinner spVida = new JSpinner();
-		spVida.setBounds(208, 101, 29, 20);
+		spVida = new JSpinner();
+		spVida.setModel(new SpinnerNumberModel(0, 0, 200, 1));
+		spVida.setBounds(179, 101, 58, 20);
 		frame.getContentPane().add(spVida);
 		
-		JSpinner spEnergia = new JSpinner();
-		spEnergia.setBounds(208, 150, 29, 20);
+		spEnergia = new JSpinner();
+		spEnergia.setBounds(179, 150, 58, 20);
 		frame.getContentPane().add(spEnergia);
 		
-		JSpinner spDefensa = new JSpinner();
-		spDefensa.setBounds(208, 193, 29, 20);
+		spDefensa = new JSpinner();
+		spDefensa.setToolTipText("El m\u00E1ximo de Defensa es de 20 puntos");
+		spDefensa.setModel(new SpinnerNumberModel(0, 0, 20, 1));
+		spDefensa.setBounds(179, 193, 58, 20);
 		frame.getContentPane().add(spDefensa);
 		
-		JSpinner spEvasion = new JSpinner();
-		spEvasion.setBounds(208, 239, 29, 20);
+		spEvasion = new JSpinner();
+		spEvasion.setToolTipText("El m\u00E1ximo de Evasion es de 20 puntos");
+		spEvasion.setModel(new SpinnerNumberModel(0, 0, 80, 1));
+		spEvasion.setBounds(179, 239, 58, 20);
 		frame.getContentPane().add(spEvasion);
 		
-		JButton btnAceptar = new JButton("Aceptar");
-		btnAceptar.addMouseListener(new MouseAdapter(){
+		JButton btnGuardar = new JButton("Guardar");
+		btnGuardar.addMouseListener(new MouseAdapter(){
 			@Override 
 			public void mouseClicked(MouseEvent e){
 				agregar();
 			}
 		});
-		btnAceptar.setBounds(63, 382, 89, 23);
-		frame.getContentPane().add(btnAceptar);
+		btnGuardar.setBounds(26, 382, 89, 23);
+		frame.getContentPane().add(btnGuardar);
 		
 		JButton btnCancelar = new JButton("Cancelar");
-		btnCancelar.setBounds(208, 382, 89, 23);
+		btnCancelar.setBounds(241, 382, 89, 23);
 		frame.getContentPane().add(btnCancelar);
+		
+		JButton btnBuscar = new JButton("Buscar");
+		btnBuscar.setBounds(241, 8, 89, 23);
+		frame.getContentPane().add(btnBuscar);
+		
+		JButton btnEliminar = new JButton("Eliminar");
+		btnEliminar.setBounds(133, 382, 89, 23);
+		frame.getContentPane().add(btnEliminar);
 		
 		}
 			
@@ -170,54 +175,60 @@ public class ABMCPersonaje {
 		notificar(mensaje);
 		SuperLogger.logger.log(warning, mensaje, ea);
 	}
+	
 	public Personaje MapearDeFormulario(){
 		
 		Personaje p = new Personaje();
+		if(!this.txtIdPersonaje.getText().isEmpty()) p.setIdPersonaje(Integer.parseInt(txtIdPersonaje.getText()));
 		p.setNombrePersonaje(txtNombre.getText());
-		p.setVida((int)spVida.getValue());
+		p.setVida((int)spVida.getValue());	
+		p.setEnergia((int)spEnergia.getValue());
 		p.setDefensa((int)spDefensa.getValue());
 		p.setEvasion((int)spEvasion.getValue());
-		
+						
 		return p;
 	}
-	private void limparCampos(){
-		txtNombre.setText("");
-		spDefensa.setValue(0);
-		spEnergia.setValue(0);
-		spEvasion.setValue(0);
-		spVida.setValue(0);			
+	private void limpiarCampos(){
+		this.txtNombre.setText("");
+		this.spDefensa.setValue(0);
+		this.spEnergia.setValue(0);
+		this.spEvasion.setValue(0);
+		this.spVida.setValue(0);			
 	}
 	
-	private void agregar() {
-		
-		try {
-			ctrl.agregar(MapearDeFormulario());
-			limparCampos();
-		} catch (ApplicationException ae) {
-			notificar(ae.getMessage());
-		}
+	protected void agregar() {
+		if (datosValidos()){
+			try {
+				Personaje p = MapearDeFormulario();
+				ctrl.agregar(p);
+				notificar("Personaje creado con exito");
+				MapearAFormulario(p);
+				//limpiarCampos();
+			} catch (ApplicationException ae) {
+				notificar(ae.getMessage());
+			}
+		}		
+	}
 	
-}
+	public void MapearAFormulario(Personaje p) {
+		
+		if(p.getIdPersonaje()>0) txtIdPersonaje.setText(String.valueOf(p.getIdPersonaje()));		
+		this.txtNombre.setText(p.getNombrePersonaje());
+		this.spVida.setValue(p.getVida());
+		this.spEnergia.setValue(p.getEnergia());
+		this.spDefensa.setValue(p.getDefensa());
+		this.spEvasion.setValue(p.getEvasion());
+		
+	}
 	
 	public boolean datosValidos(){
-		boolean valido=true;
-		int def = (int)spDefensa.getValue();
-		int eva = (int)spEvasion.getValue();
-		if(txtNombre.getText().trim().length()==0){
-			notificar("Complete el campo");		
-			valido=false;
-		}
-		if(def > 80){
-			notificar("La defensa no puede superar los 80 puntos");
-			valido=false;
-		}
-		if(eva > 20){
-			notificar("La evasion no puede superar los 20 puntos");
+		boolean valido = true;		
+		if(txtNombre.getText().trim().length() == 0){
+			notificar("Complete el nombre del personaje.");		
+			valido = false;
 		}
 		return valido;
 	}	
-
-		
 	
 }
 		
