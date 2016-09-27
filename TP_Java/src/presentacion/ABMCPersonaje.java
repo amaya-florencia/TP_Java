@@ -167,7 +167,7 @@ public class ABMCPersonaje {
 		
 		}
 			
-	private void notificar(String mensaje) {
+	public void notificar(String mensaje) {
 		JOptionPane.showMessageDialog(this.frame, mensaje);
 	}
 
