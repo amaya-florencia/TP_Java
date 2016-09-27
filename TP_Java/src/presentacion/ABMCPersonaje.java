@@ -203,7 +203,7 @@ public class ABMCPersonaje {
 				ctrl.agregar(p);
 				notificar("Personaje creado con exito");
 				MapearAFormulario(p);
-				//limpiarCampos();
+				limpiarCampos();
 			} catch (ApplicationException ae) {
 				notificar(ae.getMessage());
 			}
@@ -227,6 +227,7 @@ public class ABMCPersonaje {
 			notificar("Complete el nombre del personaje.");		
 			valido = false;
 		}
+		
 		return valido;
 	}	
 	

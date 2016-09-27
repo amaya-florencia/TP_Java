@@ -17,20 +17,19 @@ public class CtrlABMCPersonaje {
 		dataPer=new DataPersonaje();
 	}
 	
-	public ArrayList<Personaje> getAll()throws ApplicationException{
-		
-		ArrayList<Personaje> personajes = null;
-		
-			personajes = dataPer.getAll();
-		return personajes;
-	}
-	
+
 	
 	public void agregar(Personaje p) throws ApplicationException {
 		
-		if(validar(p)){
+		if(validarNombre(p)){
 			p.setPuntosTotales(puntosIniciales);
-			personajes.add(p);
+			int puntosAsignados = p.getDefensa()+p.getEnergia()+p.getEvasion()+p.getVida();
+			if(p.getPuntosTotales()>=puntosAsignados){
+				personajes.add(p);
+			}else {
+				throw new ApplicationException("La suma de los puntos asignados no debe ser mayor a "+ p.getPuntosTotales());
+			}
+			
 		} else {
 			throw new ApplicationException("El personaje ya existe");
 		}
@@ -39,14 +38,17 @@ public class CtrlABMCPersonaje {
 		
 	}
 	
-	private boolean validar(Personaje p) {
+	private boolean validarNombre(Personaje p) {
 		boolean valida = true;
 		Personaje encontrado = dataPer.getPersonajeNombre(p.getNombrePersonaje());
-		if (encontrado==null){
+		
+		
+		if (encontrado==null ){
 			valida=true;
 		}else{
 			valida=false;
 		}
+		
 		return valida;
 	}
 
@@ -71,12 +73,5 @@ public class CtrlABMCPersonaje {
 		dataPer.delete(p);
 		
 	}
-	public Personaje getPersonaje(Personaje p){
-		Personaje perEnc=null;
-		int i=personajes.indexOf(p);
-		if(i>=0){
-			perEnc=personajes.get(i);
-		}
-		return perEnc;
-	}
+	
 }
