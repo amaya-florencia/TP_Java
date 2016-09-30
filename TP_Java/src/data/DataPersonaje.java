@@ -8,7 +8,45 @@ import util.ApplicationException;
 public class DataPersonaje {
 	public DataPersonaje(){		
 	}
-	
+	public ArrayList<Personaje> getAll(){
+		ResultSet rs=null;
+		PreparedStatement stmt=null;
+		Personaje per = null;
+		ArrayList<Personaje> personajes = new ArrayList<Personaje>();
+		try{
+			stmt=FactoryConexion.getInstancia().getConn().prepareStatement("SELECT idPersonaje,nombrePersonaje,vida,"
+					+ "energia,defensa,evasion,puntos_totales FROM personajes");
+					
+			rs = stmt.executeQuery();
+			if(rs != null && rs.next())
+			{
+				per = new Personaje();
+				per.setIdPersonaje(rs.getInt("idPersonaje"));
+				per.setNombrePersonaje(rs.getString("nombrePersonaje"));
+				per.setVida(rs.getInt("vida"));
+				per.setEnergia(rs.getInt("energia"));
+				per.setDefensa(rs.getInt("defensa"));
+				per.setEvasion(rs.getInt("evasion"));			
+				per.setPuntosTotales(rs.getInt("puntos_totales"));	
+				personajes.add(per);
+			}
+		}catch (SQLException e) {			
+			e.printStackTrace();
+		} catch (ApplicationException e) {			
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs!=null) rs.close();
+				if(stmt!=null)stmt.close();
+				FactoryConexion.getInstancia().releaseConn();
+			} catch (ApplicationException e) {				
+				e.printStackTrace();
+			} catch (SQLException e) {				
+				e.printStackTrace();
+			}
+		}	
+		return personajes;
+	}
 	public Personaje getPersonajeNombre(String nombreIngresado){
 			
 		ResultSet rs=null;
