@@ -91,6 +91,11 @@ public class SeleccionarPersonajes {
 		txtEvasion.setColumns(10);
 		
 		JButton btnContinuar = new JButton("Continuar");
+		btnContinuar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				seleccionarPersonaje2();
+			}
+		});
 		
 		JButton btnCancelar = new JButton("Cancelar");
 		
@@ -194,5 +199,10 @@ public class SeleccionarPersonajes {
 		p.setEvasion(Integer.valueOf(txtEvasion.getText()));
 						
 		return p;
+	}
+	public void seleccionarPersonaje2(){
+		
+		SeleccionarPersonajes formPer2 = new SeleccionarPersonajes();
+		
 	}
 }
