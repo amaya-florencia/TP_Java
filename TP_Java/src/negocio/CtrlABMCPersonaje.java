@@ -72,5 +72,8 @@ public class CtrlABMCPersonaje {
 		return dataPer.getPersonajeNombre(nombreIngresado);
 		
 	}
+	public ArrayList<Personaje> getAll(){
+		return dataPer.getAll();
+	}
 	
 }

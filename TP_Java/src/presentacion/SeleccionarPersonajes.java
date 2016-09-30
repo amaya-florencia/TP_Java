@@ -12,7 +12,14 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+
+import negocio.CtrlABMCPersonaje;
+import entidades.Personaje;
+
 import java.awt.Color;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Font;
 
 public class SeleccionarPersonajes {
 
@@ -22,11 +29,8 @@ public class SeleccionarPersonajes {
 	private JTextField txtEnergia;
 	private JTextField txtDefensa;
 	private JTextField txtEvasion;
-	private JTextField txtNombre2;
-	private JTextField txtVida2;
-	private JTextField txtEnergia2;
-	private JTextField txtDefensa2;
-	private JTextField txtEvasion2;
+	
+	private CtrlABMCPersonaje ctrl;
 
 	/**
 	 * Launch the application.
@@ -37,6 +41,7 @@ public class SeleccionarPersonajes {
 	 */
 	public SeleccionarPersonajes() {
 		initialize();
+		ctrl = new CtrlABMCPersonaje();
 		frame.setVisible(true);
 	}
 
@@ -46,12 +51,11 @@ public class SeleccionarPersonajes {
 	private void initialize() {
 		frame = new JFrame();
 		frame.getContentPane().setEnabled(false);
-		frame.setBounds(100, 100, 874, 470);
+		frame.setBounds(100, 100, 505, 472);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JLabel lblPersonaje1 = new JLabel("Personaje 1");
-		
-		JComboBox comboBox = new JComboBox();
+		lblPersonaje1.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		
 		JLabel lblNombre = new JLabel("Nombre:");
 		
@@ -64,7 +68,6 @@ public class SeleccionarPersonajes {
 		JLabel lblEvasion = new JLabel("Evasion:");
 		
 		txtNombre = new JTextField();
-		txtNombre.setEditable(false);
 		txtNombre.setColumns(10);
 		
 		txtVida = new JTextField();
@@ -87,60 +90,25 @@ public class SeleccionarPersonajes {
 		txtEvasion.setEditable(false);
 		txtEvasion.setColumns(10);
 		
-		JButton btnSeleccionar = new JButton("Seleccionar");
-		
 		JButton btnContinuar = new JButton("Continuar");
 		
-		JLabel lblPersonaje = new JLabel("Personaje 2");
-		
-		JComboBox comboBox_1 = new JComboBox();
-		
-		JButton btnSeleccionar_1 = new JButton("Seleccionar");
-		
-		JLabel lblNombre_1 = new JLabel("Nombre:");
-		
-		JLabel lblVida_1 = new JLabel("Vida:");
-		
-		JLabel lblEnergia_1 = new JLabel("Energia:");
-		
-		JLabel lblDefensa_1 = new JLabel("Defensa:");
-		
-		JLabel lblEvasion_1 = new JLabel("Evasion:");
-		
-		txtNombre2 = new JTextField();
-		txtNombre2.setColumns(10);
-		
-		txtVida2 = new JTextField();
-		txtVida2.setColumns(10);
-		
-		txtEnergia2 = new JTextField();
-		txtEnergia2.setColumns(10);
-		
-		txtDefensa2 = new JTextField();
-		txtDefensa2.setColumns(10);
-		
-		txtEvasion2 = new JTextField();
-		txtEvasion2.setColumns(10);
-		
 		JButton btnCancelar = new JButton("Cancelar");
+		
+		JButton btnBuscar = new JButton("Buscar");
+		btnBuscar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				buscarPersonajePorNombre();
+			}
+		});
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(70)
-					.addComponent(lblPersonaje1)
-					.addPreferredGap(ComponentPlacement.RELATED, 336, Short.MAX_VALUE)
-					.addComponent(lblPersonaje)
-					.addGap(338))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(btnContinuar))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(31)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
 								.addGroup(groupLayout.createSequentialGroup()
+									.addGap(31)
 									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 										.addComponent(lblEvasion)
 										.addComponent(lblNombre, GroupLayout.PREFERRED_SIZE, 41, GroupLayout.PREFERRED_SIZE)
@@ -149,90 +117,82 @@ public class SeleccionarPersonajes {
 										.addComponent(lblDefensa))
 									.addGap(74)
 									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-										.addComponent(txtEvasion, GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
-										.addComponent(txtNombre, GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
-										.addComponent(txtVida, GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
-										.addComponent(txtEnergia, GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
-										.addComponent(txtDefensa, GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)))
+										.addComponent(txtEvasion, GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
+										.addComponent(txtNombre, GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
+										.addComponent(txtVida, GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
+										.addComponent(txtEnergia, GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
+										.addComponent(txtDefensa, GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE))
+									.addGap(18))
 								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 139, GroupLayout.PREFERRED_SIZE)
-									.addGap(27)
-									.addComponent(btnSeleccionar)))
-							.addGap(135)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(comboBox_1, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
-									.addComponent(btnSeleccionar_1))
-								.addGroup(groupLayout.createSequentialGroup()
-									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-										.addComponent(lblNombre_1)
-										.addComponent(lblVida_1)
-										.addComponent(lblEnergia_1)
-										.addComponent(lblDefensa_1)
-										.addComponent(lblEvasion_1))
-									.addGap(65)
-									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-										.addComponent(txtVida2, GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
-										.addComponent(txtNombre2, GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
-										.addComponent(txtEnergia2, GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
-										.addComponent(txtDefensa2, GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
-										.addComponent(txtEvasion2, GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE))))))
-					.addGap(58)
-					.addComponent(btnCancelar)
-					.addGap(49))
+									.addContainerGap()
+									.addComponent(lblPersonaje1)
+									.addGap(77)))
+							.addComponent(btnBuscar))
+						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+							.addGap(197)
+							.addComponent(btnCancelar)
+							.addGap(89)
+							.addComponent(btnContinuar)))
+					.addGap(254))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(28)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblPersonaje1)
-						.addComponent(lblPersonaje))
-					.addGap(18)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnSeleccionar)
-						.addComponent(comboBox_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnSeleccionar_1))
-					.addGap(67)
+					.addGap(84)
+					.addComponent(lblPersonaje1)
+					.addGap(52)
 					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
 						.addComponent(lblEvasion)
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 								.addComponent(txtNombre, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 								.addComponent(lblNombre)
-								.addComponent(lblNombre_1)
-								.addComponent(txtNombre2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+								.addComponent(btnBuscar))
 							.addGap(28)
 							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 								.addComponent(txtVida, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblVida)
-								.addComponent(lblVida_1)
-								.addComponent(txtVida2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+								.addComponent(lblVida))
 							.addGap(32)
 							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 								.addComponent(txtEnergia, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblEnergia)
-								.addComponent(lblEnergia_1)
-								.addComponent(txtEnergia2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+								.addComponent(lblEnergia))
 							.addGap(32)
 							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 								.addComponent(txtDefensa, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblDefensa)
-								.addComponent(lblDefensa_1)
-								.addComponent(txtDefensa2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+								.addComponent(lblDefensa))
 							.addGap(28)
-							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(txtEvasion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblEvasion_1)
-								.addComponent(txtEvasion2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
+							.addComponent(txtEvasion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 					.addGap(18)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnContinuar)
-						.addComponent(btnCancelar))
+						.addComponent(btnCancelar)
+						.addComponent(btnContinuar))
 					.addGap(20))
 		);
 		frame.getContentPane().setLayout(groupLayout);
+	}
+	
+	public void buscarPersonajePorNombre(){
+		
+		 this.MapearAFormulario(ctrl.buscarPersonajePorNombre(this.MapearDeFormulario().getNombrePersonaje()));
+		
+	}
+	public void MapearAFormulario(Personaje p){
+		//if(p.getIdPersonaje()>0) txtIdPersonaje.setText(String.valueOf(p.getIdPersonaje()));		
+		this.txtNombre.setText(p.getNombrePersonaje());
+		this.txtDefensa.setText(String.valueOf(p.getDefensa()));
+		this.txtEnergia.setText(String.valueOf(p.getEnergia()));
+		this.txtEvasion.setText(String.valueOf(p.getEvasion()));
+		this.txtVida.setText(String.valueOf(p.getVida()));	
+	}
+	public Personaje MapearDeFormulario(){
+		Personaje p = new Personaje();
+		//if(!this.txtIdPersonaje.getText().isEmpty()) p.setIdPersonaje(Integer.parseInt(txtIdPersonaje.getText()));
+		p.setNombrePersonaje(txtNombre.getText());
+		p.setVida(Integer.valueOf(txtVida.getText()));	
+		p.setEnergia(Integer.valueOf(txtEnergia.getText()));
+		p.setDefensa(Integer.valueOf(txtDefensa.getText()));
+		p.setEvasion(Integer.valueOf(txtEvasion.getText()));
+						
+		return p;
 	}
 }

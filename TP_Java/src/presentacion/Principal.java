@@ -48,7 +48,7 @@ public class Principal {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JPanel panel = new JPanel();
-		frame.getContentPane().add(panel, BorderLayout.CENTER);
+		frame.getContentPane().add(panel, BorderLayout.NORTH);
 		
 		JButton btnCargarPersonajes = new JButton("Cargar Personajes ");
 		btnCargarPersonajes.addActionListener(new ActionListener() {
