@@ -1,11 +1,11 @@
 package util;
 
-import org.apache.log4j.Level;
+import org.apache.logging.log4j.Level;
 
 public class ApplicationException extends Exception {
 
 	/**
-	 *  
+	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -16,13 +16,12 @@ public class ApplicationException extends Exception {
 	
 	public ApplicationException(String message){
 		super(message);
-		SuperLogger.logger.log(null, message, Level.ERROR, message);
-		
+		SuperLogger.logger.log(Level.ERROR, message);
 	}
 	
 	public ApplicationException(String message, Throwable cause){
 		super(message,cause);
-		SuperLogger.logger.log(null, message, Level.ERROR, message);
+		SuperLogger.logger.log(Level.ERROR, message, cause);
 		
 	}
 }
