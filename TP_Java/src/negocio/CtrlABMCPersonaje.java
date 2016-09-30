@@ -40,37 +40,36 @@ public class CtrlABMCPersonaje {
 	
 	private boolean validarNombre(Personaje p) {
 		boolean valida = true;
-		Personaje encontrado = dataPer.getPersonajeNombre(p.getNombrePersonaje());
-		
-		
+		Personaje encontrado = dataPer.getPersonajeNombre(p.getNombrePersonaje());	
 		if (encontrado==null ){
 			valida=true;
 		}else{
 			valida=false;
 		}
-		
 		return valida;
 	}
 
-	public void modificar(Personaje p) throws ApplicationException{
-		/*if(personajes.contains(p)){
-			Personaje perEnc = this.getPersonaje(p);
-			perEnc.setNombrePersonaje(p.getNombrePersonaje());
-			perEnc.setVida(p.getVida());
-			perEnc.setEnergia(p.getEnergia());
-			perEnc.setDefensa(p.getDefensa());
-			perEnc.setEvasion(p.getEvasion());
-			
-		}else{
-			throw new ApplicationException("El personaje no existe");
-		}		*/
-		dataPer.update(p);
+	public void update(Personaje p) throws ApplicationException{
+		Personaje personajeModificado = new Personaje();
+		personajeModificado= dataPer.getPersonajeNombre(p.getNombrePersonaje());
+		personajeModificado.setNombrePersonaje(p.getNombrePersonaje());
+		personajeModificado.setVida(p.getVida());
+		personajeModificado.setEnergia(p.getEnergia());
+		personajeModificado.setEvasion(p.getEvasion());
+		personajeModificado.setDefensa(p.getDefensa());
+		dataPer.update(personajeModificado);
 		
 	}	
 	
 	public void eliminar(Personaje p){
 		//personajes.remove(p);
 		dataPer.delete(p);
+		
+	}
+	
+	public Personaje buscarPersonajePorNombre(String nombreIngresado){
+		
+		return dataPer.getPersonajeNombre(nombreIngresado);
 		
 	}
 	

@@ -19,6 +19,9 @@ import negocio.*;
 import util.ApplicationException;
 import util.SuperLogger;
 import javax.swing.SpinnerNumberModel;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.SwingConstants;
 
 public class ABMCPersonaje {
 	private CtrlABMCPersonaje ctrl;
@@ -27,7 +30,6 @@ public class ABMCPersonaje {
 	private JTextField txtIdPersonaje;
 	private JTextField txtNombre;
 	private JTextField txtPuntosTotales;
-	private JTextField txtPuntosRestantes;
 	private JSpinner spVida;
 	private JSpinner spEnergia;
 	private JSpinner spDefensa;
@@ -36,21 +38,11 @@ public class ABMCPersonaje {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ABMCPersonaje window = new ABMCPersonaje();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	public ABMCPersonaje() {
+	
+	public ABMCPersonaje() {		
 		initialize();
 		ctrl = new CtrlABMCPersonaje();
+		frame.setVisible(true);
 	}
 	/**
 	 * 	 * Initialize the contents of the frame.
@@ -61,7 +53,7 @@ public class ABMCPersonaje {
 		frame = new JFrame();
 		frame.setTitle("ABM Personaje");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setBounds(100, 100, 356, 467);
+		frame.setBounds(100, 100, 418, 484);
 		frame.getContentPane().setLayout(null);
 
 		
@@ -93,10 +85,6 @@ public class ABMCPersonaje {
 		lblPuntosTotales.setBounds(12, 288, 70, 15);
 		frame.getContentPane().add(lblPuntosTotales);
 		
-		JLabel lblPuntosRestantes = new JLabel("Puntos restantes");
-		lblPuntosRestantes.setBounds(12, 334, 97, 15);
-		frame.getContentPane().add(lblPuntosRestantes);
-		
 		txtIdPersonaje = new JTextField();
 		txtIdPersonaje.setEnabled(false);
 		txtIdPersonaje.setEditable(false);
@@ -115,12 +103,6 @@ public class ABMCPersonaje {
 		txtPuntosTotales.setColumns(10);
 		txtPuntosTotales.setBounds(167, 287, 70, 15);
 		frame.getContentPane().add(txtPuntosTotales);
-		
-		txtPuntosRestantes = new JTextField();
-		txtPuntosRestantes.setEditable(false);
-		txtPuntosRestantes.setColumns(10);
-		txtPuntosRestantes.setBounds(167, 333, 70, 15);
-		frame.getContentPane().add(txtPuntosRestantes);
 		
 		spVida = new JSpinner();
 		spVida.setModel(new SpinnerNumberModel(0, 0, 200, 1));
@@ -143,41 +125,46 @@ public class ABMCPersonaje {
 		spEvasion.setBounds(179, 239, 58, 20);
 		frame.getContentPane().add(spEvasion);
 		
-		JButton btnGuardar = new JButton("Guardar");
+		JButton btnGuardar = new JButton("Agregar Nuevo");
 		btnGuardar.addMouseListener(new MouseAdapter(){
 			@Override 
 			public void mouseClicked(MouseEvent e){
 				agregar();
 			}
 		});
-		btnGuardar.setBounds(26, 382, 89, 23);
+		btnGuardar.setBounds(12, 352, 113, 23);
 		frame.getContentPane().add(btnGuardar);
 		
 		JButton btnCancelar = new JButton("Cancelar");
-		btnCancelar.setBounds(241, 382, 89, 23);
+		btnCancelar.setBounds(291, 411, 89, 23);
 		frame.getContentPane().add(btnCancelar);
 		
 		JButton btnBuscar = new JButton("Buscar");
-		btnBuscar.setBounds(241, 8, 89, 23);
+		btnBuscar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				buscarPersonajePorNombre();
+			}
+			
+		});
+		btnBuscar.setBounds(291, 54, 89, 23);
 		frame.getContentPane().add(btnBuscar);
 		
 		JButton btnEliminar = new JButton("Eliminar");
-		btnEliminar.setBounds(133, 382, 89, 23);
+		btnEliminar.setBounds(291, 352, 89, 23);
 		frame.getContentPane().add(btnEliminar);
 		
-		}
-			
-	public void notificar(String mensaje) {
-		JOptionPane.showMessageDialog(this.frame, mensaje);
-	}
+		JButton btnModificar = new JButton("Modificar");
+		btnModificar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				modificar();
+			}
 
-	private void notificar(String mensaje, Exception ea, org.apache.logging.log4j.Level warning) {
-		notificar(mensaje);
-		SuperLogger.logger.log(warning, mensaje, ea);
-	}
+		});
+		btnModificar.setBounds(167, 352, 89, 23);
+		frame.getContentPane().add(btnModificar);
+		}
 	
 	public Personaje MapearDeFormulario(){
-		
 		Personaje p = new Personaje();
 		if(!this.txtIdPersonaje.getText().isEmpty()) p.setIdPersonaje(Integer.parseInt(txtIdPersonaje.getText()));
 		p.setNombrePersonaje(txtNombre.getText());
@@ -185,15 +172,18 @@ public class ABMCPersonaje {
 		p.setEnergia((int)spEnergia.getValue());
 		p.setDefensa((int)spDefensa.getValue());
 		p.setEvasion((int)spEvasion.getValue());
+		
 						
 		return p;
 	}
+	
 	private void limpiarCampos(){
 		this.txtNombre.setText("");
 		this.spDefensa.setValue(0);
 		this.spEnergia.setValue(0);
 		this.spEvasion.setValue(0);
-		this.spVida.setValue(0);			
+		this.spVida.setValue(0);	
+		
 	}
 	
 	protected void agregar() {
@@ -201,13 +191,36 @@ public class ABMCPersonaje {
 			try {
 				Personaje p = MapearDeFormulario();
 				ctrl.agregar(p);
-				notificar("Personaje creado con exito");
+				notificar("Personaje creado con éxito");
 				MapearAFormulario(p);
 				limpiarCampos();
 			} catch (ApplicationException ae) {
 				notificar(ae.getMessage());
 			}
 		}		
+	}
+	
+
+	protected void modificar() {
+		if(datosValidos()){
+			Personaje p = MapearDeFormulario();
+			p.setIdPersonaje(Integer.parseInt(txtIdPersonaje.getText()));
+			p.setPuntosTotales(Integer.parseInt(txtPuntosTotales.getText()));
+			try {
+				ctrl.update(p);
+				
+			} catch (ApplicationException ae) {
+				// TODO Auto-generated catch block
+				notificar(ae.getMessage());
+			}
+			
+		}
+		
+	}
+	
+	private void buscarPersonajePorNombre() {
+		
+		this.MapearAFormulario(ctrl.buscarPersonajePorNombre(this.MapearDeFormulario().getNombrePersonaje()));
 	}
 	
 	public void MapearAFormulario(Personaje p) {
@@ -218,6 +231,7 @@ public class ABMCPersonaje {
 		this.spEnergia.setValue(p.getEnergia());
 		this.spDefensa.setValue(p.getDefensa());
 		this.spEvasion.setValue(p.getEvasion());
+		this.txtPuntosTotales.setText(String.valueOf(p.getPuntosTotales()));
 		
 	}
 	
@@ -227,9 +241,17 @@ public class ABMCPersonaje {
 			notificar("Complete el nombre del personaje.");		
 			valido = false;
 		}
-		
 		return valido;
 	}	
+	
+	public void notificar(String mensaje) {
+		JOptionPane.showMessageDialog(this.frame, mensaje);
+	}
+
+	private void notificar(String mensaje, Exception ea, org.apache.logging.log4j.Level warning) {
+		notificar(mensaje);
+		SuperLogger.logger.log(warning, mensaje, ea);
+	}
 	
 }
 		

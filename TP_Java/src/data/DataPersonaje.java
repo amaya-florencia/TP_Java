@@ -93,19 +93,23 @@ public class DataPersonaje {
 		}
 	}
 	public void update(Personaje p){
-		PreparedStatement stmt=null;		
+		ResultSet rs=null;
+		PreparedStatement stmt=null;	
 		try {
 			stmt= FactoryConexion.getInstancia().getConn().prepareStatement(
 					"UPDATE personajes SET nombrePersonaje=?,vida=?,energia=?,defensa=?,evasion=?,puntos_totales=?"+
-					" WHERE idPersonaje=?");			
+					" WHERE idPersonaje=?");	
 			
-			stmt.setString(1, p.getNombrePersonaje());
-			stmt.setInt(2, p.getVida());
-			stmt.setInt(3, p.getEnergia());
-			stmt.setInt(4, p.getDefensa());
-			stmt.setInt(5, p.getEvasion());
-			stmt.setInt(6, p.getPuntosTotales());
-			stmt.setInt(7, p.getIdPersonaje());
+			stmt.setInt(1, p.getIdPersonaje());
+			stmt.setString(2, p.getNombrePersonaje());
+			stmt.setInt(3, p.getVida());
+			stmt.setInt(4, p.getEnergia());
+			stmt.setInt(5, p.getDefensa());
+			stmt.setInt(6, p.getEvasion());
+			stmt.setInt(7, p.getPuntosTotales());
+			
+			
+			stmt.executeUpdate();
 			
 		} catch (SQLException e) {			
 			e.printStackTrace();
