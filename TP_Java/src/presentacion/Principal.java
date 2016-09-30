@@ -14,6 +14,7 @@ import javax.swing.JInternalFrame;
 
 public class Principal {
 
+	//http://www.java2s.com/Tutorial/Java/0240__Swing/JComboBoxUsingtheCustomModel.htm
 	private JFrame frame;
 
 	/**
