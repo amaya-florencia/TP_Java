@@ -8,44 +8,87 @@ import util.ApplicationException;
 public class DataPersonaje {
 	public DataPersonaje(){		
 	}
-	public ArrayList<Personaje> getAll(){
-		ResultSet rs=null;
-		PreparedStatement stmt=null;
-		Personaje per = null;
-		ArrayList<Personaje> personajes = new ArrayList<Personaje>();
-		try{
+	public ResultSet getResultSet() throws ApplicationException{
+
+		
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try
+		{
+			stmt = FactoryConexion.getInstancia().getConn().prepareStatement(
+					"SELECT idPersonaje, nombre, evasion, defensa, vida, energia, puntosTotales " +
+					"FROM personajes"
+				   );			
+			rs = stmt.executeQuery();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ApplicationException e) {
+			throw e;
+		}
+		finally
+		{
+			try {
+				if(rs != null) rs.close();
+				if(stmt != null) stmt.close();
+				FactoryConexion.getInstancia().releaseConn();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ApplicationException e) {
+				throw e;
+			}
+		}		
+		return rs;
+		
+	}
+	@SuppressWarnings("null")
+	public ArrayList<Personaje> getAll() throws ApplicationException{
+		ArrayList<Personaje> personajes = null;		
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try
+		{
 			stmt=FactoryConexion.getInstancia().getConn().prepareStatement("SELECT idPersonaje,nombrePersonaje,vida,"
 					+ "energia,defensa,evasion,puntos_totales FROM personajes");
 					
 			rs = stmt.executeQuery();
 			if(rs != null && rs.next())
 			{
-				per = new Personaje();
-				per.setIdPersonaje(rs.getInt("idPersonaje"));
-				per.setNombrePersonaje(rs.getString("nombrePersonaje"));
-				per.setVida(rs.getInt("vida"));
-				per.setEnergia(rs.getInt("energia"));
-				per.setDefensa(rs.getInt("defensa"));
-				per.setEvasion(rs.getInt("evasion"));			
-				per.setPuntosTotales(rs.getInt("puntos_totales"));	
-				personajes.add(per);
+				Personaje p = new Personaje();
+				p.setIdPersonaje(rs.getInt("idPersonaje"));
+				p.setNombrePersonaje(rs.getString("nombrePersonaje"));
+				p.setVida(rs.getInt("vida"));
+				p.setEnergia(rs.getInt("energia"));
+				p.setDefensa(rs.getInt("defensa"));
+				p.setEvasion(rs.getInt("evasion"));			
+				p.setPuntosTotales(rs.getInt("puntos_totales"));
+				
+				personajes.add(p);
+				
 			}
-		}catch (SQLException e) {			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ApplicationException e) {			
-			e.printStackTrace();
-		}finally {
+		} catch (ApplicationException e) {
+			throw e;
+		}
+		finally
+		{
 			try {
-				if(rs!=null) rs.close();
-				if(stmt!=null)stmt.close();
+				if(rs != null) rs.close();
+				if(stmt != null) stmt.close();
 				FactoryConexion.getInstancia().releaseConn();
-			} catch (ApplicationException e) {				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (SQLException e) {				
-				e.printStackTrace();
+			} catch (ApplicationException e) {
+				throw e;
 			}
-		}	
+		}		
 		return personajes;
+	
 	}
 	public Personaje getPersonajeNombre(String nombreIngresado){
 			
@@ -147,7 +190,7 @@ public class DataPersonaje {
 			stmt.setInt(7, p.getPuntosTotales());
 			
 			
-			stmt.executeUpdate();
+			stmt.execute();
 			
 		} catch (SQLException e) {			
 			e.printStackTrace();
