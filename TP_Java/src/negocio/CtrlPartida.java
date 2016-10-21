@@ -18,7 +18,7 @@ public class CtrlPartida {
 	private int vidaOriginal2;
 	private int energiaOriginal1;
 	private int energiaOriginal2;
-	private int puntosGanador = 20;
+	private int puntosGanador = 10;
 
 	public int getVidaOriginal1() {
 		return vidaOriginal1;
@@ -118,7 +118,6 @@ public class CtrlPartida {
 	}
 	public void ataque(int energiaAtaque,Personaje atacante, Personaje defensor) throws ApplicationException{
 		
-		
 			atacante.setEnergia(atacante.getEnergia() - energiaAtaque);	
 			boolean evade =this.defensorEvade(energiaAtaque,defensor);
 			if(!evade){
@@ -129,12 +128,14 @@ public class CtrlPartida {
 					throw new ApplicationException("El ataque es efectivo!!  "+ 
 								defensor.getNombrePersonaje()+"pierde "+energiaAtaque + "  puntos de vida");
 	
-				}else{					
+				}else{			
+						defensor.setVida(0);
 						throw new ApplicationException("Felicitaciones! Has derrotado a "+defensor.getNombrePersonaje());						
 				}
 				}else{
 				throw new ApplicationException("Tu ataque ha sido evadido!  "+ defensor.getNombrePersonaje()+" conserva sus puntos de vida ");
 			}
+			
 		}	
 	public void premio(Personaje ganador) throws ApplicationException{
 		if (ganador == this.getPersonaje1()){
@@ -152,11 +153,12 @@ public class CtrlPartida {
 	}
 	
 	public boolean defensorEvade(int energiaAtaque,Personaje defensor){
-		boolean evade = false;
+		boolean evade;
 		Random rnd = new Random();
 		Double i = rnd.nextDouble();
 		if (i*100 > defensor.getEvasion()){//no evade ataque			
-			defensor.setVida(defensor.getVida()-energiaAtaque);
+			//defensor.setVida(defensor.getVida()-energiaAtaque);
+			evade=false;
 		}else{
 			evade = true;
 		}

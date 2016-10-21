@@ -36,6 +36,10 @@ public class ABMCPersonaje extends JInternalFrame {
 	private JSpinner spEnergia;
 	private JSpinner spDefensa;
 	private JSpinner spEvasion;	
+	private JButton btnBuscar;
+	private JButton btnGuardar;
+	private JButton btnEliminar;
+	private JButton btnModificar;
 
 	public ABMCPersonaje() {		
 		initialize();
@@ -46,7 +50,7 @@ public class ABMCPersonaje extends JInternalFrame {
 		
 		frame = new JFrame();
 		frame.setTitle("ABM Personaje");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setBounds(100, 100, 418, 484);
 		frame.getContentPane().setLayout(null);
 		frame.setVisible(true);
@@ -84,12 +88,12 @@ public class ABMCPersonaje extends JInternalFrame {
 		txtIdPersonaje.setEnabled(false);
 		txtIdPersonaje.setEditable(false);
 		txtIdPersonaje.setColumns(10);
-		txtIdPersonaje.setBounds(107, 11, 130, 15);
+		txtIdPersonaje.setBounds(107, 15, 130, 20);
 		frame.getContentPane().add(txtIdPersonaje);
 		
 		txtNombre = new JTextField();
 		txtNombre.setColumns(10); 
-		txtNombre.setBounds(107, 57, 130, 15);
+		txtNombre.setBounds(107, 57, 130, 20);
 		frame.getContentPane().add(txtNombre);
 
 		
@@ -97,7 +101,7 @@ public class ABMCPersonaje extends JInternalFrame {
 		txtPuntosTotales.setText("200");
 		txtPuntosTotales.setEditable(false);
 		txtPuntosTotales.setColumns(10);
-		txtPuntosTotales.setBounds(167, 287, 70, 15);
+		txtPuntosTotales.setBounds(167, 287, 70, 20);
 		frame.getContentPane().add(txtPuntosTotales);
 		
 		spVida = new JSpinner();
@@ -116,26 +120,31 @@ public class ABMCPersonaje extends JInternalFrame {
 		frame.getContentPane().add(spDefensa);
 		
 		spEvasion = new JSpinner();
-		spEvasion.setToolTipText("El m\u00E1ximo de Evasion es de 20 puntos");
+		spEvasion.setToolTipText("El m\u00E1ximo de Evasion es de 80 puntos");
 		spEvasion.setModel(new SpinnerNumberModel(0, 0, 80, 1));
 		spEvasion.setBounds(179, 239, 58, 20);
 		frame.getContentPane().add(spEvasion);
 		
-		JButton btnGuardar = new JButton("Agregar Nuevo");
+		btnGuardar = new JButton("Nuevo");
 		btnGuardar.addMouseListener(new MouseAdapter(){
 			@Override 
 			public void mouseClicked(MouseEvent e){
 				agregar();
 			}
 		});
-		btnGuardar.setBounds(12, 352, 113, 23);
+		btnGuardar.setBounds(25, 352, 100, 23);
 		frame.getContentPane().add(btnGuardar);
 		
 		JButton btnCancelar = new JButton("Cancelar");
-		btnCancelar.setBounds(291, 411, 89, 23);
+		btnCancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				frame.dispose();
+			}
+		});
+		btnCancelar.setBounds(280, 411, 100, 23);
 		frame.getContentPane().add(btnCancelar);
 		
-		JButton btnBuscar = new JButton("Buscar");
+		btnBuscar = new JButton("Buscar");
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				buscarPersonajePorNombre();
@@ -145,24 +154,30 @@ public class ABMCPersonaje extends JInternalFrame {
 		btnBuscar.setBounds(291, 54, 89, 23);
 		frame.getContentPane().add(btnBuscar);
 		
-		JButton btnEliminar = new JButton("Eliminar");
+		
+		btnEliminar = new JButton("Eliminar");
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				eliminar();
 			}
 		});
-		btnEliminar.setBounds(291, 352, 89, 23);
+		btnEliminar.setBounds(280, 352, 100, 23);
 		frame.getContentPane().add(btnEliminar);
+		btnEliminar.setVisible(false);
 		
-		JButton btnModificar = new JButton("Modificar");
+		
+		btnModificar = new JButton("Modificar");
 		btnModificar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				modificar();
 			}
 
 		});
-		btnModificar.setBounds(167, 352, 89, 23);
+		btnModificar.setBounds(156, 352, 100, 23);
 		frame.getContentPane().add(btnModificar);
+		btnModificar.setVisible(false);
+		
+		
 		}
 	
 	public Personaje MapearDeFormulario(){
@@ -183,6 +198,13 @@ public class ABMCPersonaje extends JInternalFrame {
 		this.spEnergia.setValue(0);
 		this.spEvasion.setValue(0);
 		this.spVida.setValue(0);	
+		
+		this.txtPuntosTotales.setText("200");
+		
+		this.btnEliminar.setVisible(false);
+		this.btnModificar.setVisible(false);
+		this.btnGuardar.setVisible(true);
+		
 		
 	}	
 	protected void agregar() {
@@ -209,6 +231,8 @@ public class ABMCPersonaje extends JInternalFrame {
 				p.setIdPersonaje(Integer.parseInt(txtIdPersonaje.getText()));
 				p.setPuntosTotales(Integer.parseInt(txtPuntosTotales.getText()));
 				ctrl.update(p);
+				notificar("Personaje modificado con éxito");
+				this.limpiarCampos();
 				
 			} catch (ApplicationException ae) {
 				// TODO Auto-generated catch block
@@ -232,7 +256,12 @@ public class ABMCPersonaje extends JInternalFrame {
 	
 	private void buscarPersonajePorNombre() {		
 		try {
+			
 			this.MapearAFormulario(ctrl.buscarPersonajePorNombre(this.txtNombre.getText()));
+			this.btnModificar.setVisible(true);
+			this.btnEliminar.setVisible(true);
+			this.btnGuardar.setVisible(false);
+			
 		} catch (ApplicationException e) {
 			// TODO Auto-generated catch block
 			notificar(e.getMessage());

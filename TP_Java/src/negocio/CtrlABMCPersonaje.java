@@ -60,7 +60,17 @@ public class CtrlABMCPersonaje {
 	}
 
 	public void update(Personaje p) throws ApplicationException{
+		if(this.validarNombre(p.getNombrePersonaje())){
+			int puntosAsignados = p.getDefensa()+p.getEnergia()+p.getEvasion()+p.getVida();
+			if(p.getPuntosTotales()>=puntosAsignados){
 			dataPer.update(p);	
+			}else{
+				throw new ApplicationException("La suma de los puntos asignados no debe ser mayor a "+ p.getPuntosTotales());
+			}
+		}else{
+			throw new ApplicationException("El personaje no existe");
+		}
+		
 	}	
 	
 	public void eliminar(Personaje p)throws ApplicationException{
