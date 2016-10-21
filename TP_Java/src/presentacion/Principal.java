@@ -6,21 +6,16 @@ import javax.swing.JFrame;
 import javax.swing.JButton;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.event.ActionListener;
-
 import java.awt.event.ActionEvent;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
 import util.ApplicationException;
-
 import javax.swing.JDesktopPane;
-import javax.swing.JInternalFrame;
+
 
 public class Principal {
 
-	//http://www.java2s.com/Tutorial/Java/0240__Swing/JComboBoxUsingtheCustomModel.htm
+	
 	private JFrame frame;
 	private JDesktopPane desktopPane;
 
@@ -91,12 +86,12 @@ public class Principal {
 		panel.add(btnIniciarPartida);
 	}
 	public void cargarPersonaje()throws ApplicationException {
-		ABMCPersonaje abm = new ABMCPersonaje();
+		ABMCPersonaje abm = new ABMCPersonaje(); //instancio el formulario
 		this.desktopPane.add(abm);
 	}
 	public void combate() throws ApplicationException{
-		Combat comb = new Combat();
-		//this.desktopPane.add(comb);
+		Combat comb = new Combat();//instancio el formulario
+		this.desktopPane.add(comb);
 	}
 	
 

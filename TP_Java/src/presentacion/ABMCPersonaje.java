@@ -115,13 +115,13 @@ public class ABMCPersonaje extends JInternalFrame {
 		
 		spDefensa = new JSpinner();
 		spDefensa.setToolTipText("El m\u00E1ximo de Defensa es de 20 puntos");
-		spDefensa.setModel(new SpinnerNumberModel(0, 0, 20, 1));
+		spDefensa.setModel(new SpinnerNumberModel(new Integer(0), new Integer(0), null, new Integer(1)));
 		spDefensa.setBounds(179, 193, 58, 20);
 		frame.getContentPane().add(spDefensa);
 		
 		spEvasion = new JSpinner();
 		spEvasion.setToolTipText("El m\u00E1ximo de Evasion es de 80 puntos");
-		spEvasion.setModel(new SpinnerNumberModel(0, 0, 80, 1));
+		spEvasion.setModel(new SpinnerNumberModel(new Integer(0), new Integer(0), null, new Integer(1)));
 		spEvasion.setBounds(179, 239, 58, 20);
 		frame.getContentPane().add(spEvasion);
 		
@@ -198,9 +198,7 @@ public class ABMCPersonaje extends JInternalFrame {
 		this.spEnergia.setValue(0);
 		this.spEvasion.setValue(0);
 		this.spVida.setValue(0);	
-		
 		this.txtPuntosTotales.setText("200");
-		
 		this.btnEliminar.setVisible(false);
 		this.btnModificar.setVisible(false);
 		this.btnGuardar.setVisible(true);
@@ -208,12 +206,12 @@ public class ABMCPersonaje extends JInternalFrame {
 		
 	}	
 	protected void agregar() {
-		if (datosValidos()){
+		if (datosValidos()){ //valida que el campo no este vacio
 			try {
-				Personaje p = MapearDeFormulario();
-				this.txtPuntosTotales.setText("200");
-				ctrl.agregar(p);
-				MapearAFormulario(p);
+				this.txtPuntosTotales.setText("200"); // muestro el valor por defecto 
+				Personaje p = MapearDeFormulario(); //recupero los valores del formulario
+				ctrl.agregar(p); // le envio a la capa logica el personaje a insertar
+				MapearAFormulario(p); //lo llamo para que muestre el id
 				notificar("Personaje creado con éxito");
 				
 				limpiarCampos();
@@ -227,10 +225,8 @@ public class ABMCPersonaje extends JInternalFrame {
 		if(datosValidos()){
 			try {
 				Personaje p = MapearDeFormulario();
-				MapearAFormulario(p);
-				p.setIdPersonaje(Integer.parseInt(txtIdPersonaje.getText()));
-				p.setPuntosTotales(Integer.parseInt(txtPuntosTotales.getText()));
-				ctrl.update(p);
+				MapearAFormulario(p);				
+				ctrl.update(p);//lo envio a la capa logica el personaje para que haga el update
 				notificar("Personaje modificado con éxito");
 				this.limpiarCampos();
 				
@@ -244,9 +240,8 @@ public class ABMCPersonaje extends JInternalFrame {
 		if (datosValidos()){
 			try {
 				Personaje p = MapearDeFormulario();
-				ctrl.eliminar(p);
-				notificar("Personaje eliminado con éxito");
-				
+				ctrl.eliminar(p);// lo envio a la capa logica el personaje para que haga el delete
+				notificar("Personaje eliminado con éxito");				
 				limpiarCampos();
 		  } catch (ApplicationException ae) {
 				notificar(ae.getMessage());
@@ -258,6 +253,7 @@ public class ABMCPersonaje extends JInternalFrame {
 		try {
 			
 			this.MapearAFormulario(ctrl.buscarPersonajePorNombre(this.txtNombre.getText()));
+			//una vez encontrado deshabilito los botones
 			this.btnModificar.setVisible(true);
 			this.btnEliminar.setVisible(true);
 			this.btnGuardar.setVisible(false);

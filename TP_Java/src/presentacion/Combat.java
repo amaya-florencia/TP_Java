@@ -1,9 +1,6 @@
 package presentacion;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JTextField;
@@ -23,13 +20,13 @@ import util.SuperLogger;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.SpinnerNumberModel;
 
 @SuppressWarnings("serial")
 public class Combat extends JFrame {
 
 	private JFrame frame;
 	private JTextField txtNombre1;
-
 	private JLabel lblEnergiaAtaque;
 	private JLabel lblVida;
 	private JLabel lblEnergia;
@@ -72,10 +69,7 @@ public class Combat extends JFrame {
 		
 	}
 	
-	
-	/**
-	 * Initialize the contents of the frame.
-	 */
+
 	private void initialize() {
 		frame = new JFrame();
 		frame.setTitle("Combate");
@@ -116,6 +110,7 @@ public class Combat extends JFrame {
 		txtVida1.setColumns(10);
 		
 		spnEnergiaAtaque1 = new JSpinner();
+		spnEnergiaAtaque1.setModel(new SpinnerNumberModel(new Integer(0), new Integer(0), null, new Integer(1)));
 		spnEnergiaAtaque1.setEnabled(false);
 		
 		lblEnergiaAtaque2 = new JLabel("Energia de Ataque");
@@ -145,6 +140,7 @@ public class Combat extends JFrame {
 		txtVida2.setColumns(10);
 		
 		spnEnergiaAtaque2 = new JSpinner();
+		spnEnergiaAtaque2.setModel(new SpinnerNumberModel(new Integer(0), new Integer(0), null, new Integer(1)));
 		spnEnergiaAtaque2.setEnabled(false);
 		
 		txtNombre2 = new JTextField();
@@ -321,6 +317,7 @@ public class Combat extends JFrame {
 		);
 		frame.getContentPane().setLayout(groupLayout);
 	}
+	//genero los gets y set para ambos personajes
 	public Personaje getPer1() {
 		return per1;
 	}
@@ -337,25 +334,31 @@ public class Combat extends JFrame {
 	
 	private void inicio() throws ApplicationException {
 		try {
+			//busco ambos personajes 
 			Personaje per1= ctrlPersonaje.buscarPersonajePorNombre(this.txtNombre1.getText().trim());		
 			Personaje per2= ctrlPersonaje.buscarPersonajePorNombre(this.txtNombre2.getText().trim());	
+			//los mapeo
 			this.mapearAFormulario(per1, per2);
+			//seteo las variables para luego poder acceder por los gets y sets
 			this.setPer1(per1);
 			this.setPer2(per2);
+			//envia al ctrl partida los personajes para guardar los valores originales de vida y energia
 			ctrlPartida = new CtrlPartida(per1,per2);	
+			//habilito y deshabilito botones
 			this.btnInicio.setEnabled(false);
 			this.spnEnergiaAtaque1.setEnabled(true);	
 			this.btnAtaque.setEnabled(true);
 			this.btnDefensa.setEnabled(true);
 			
 		} catch (ApplicationException e) {
+			//muestro las excepciones generadas en el ctrl
 			notificar(e.getMessage());
 		}
 	}
 
-
-	public void mapearAFormulario(Personaje p1,Personaje p2) {		
-		this.txtNombre1.setEditable(false);
+	public void mapearAFormulario(Personaje p1,Personaje p2) {	
+		//cargo el formulario con los datos de los personajes elegidos
+		this.txtNombre1.setEditable(false); //bloqueo el txt 
 		this.txtVida1.setText(String.valueOf(p1.getVida()));
 		this.txtEnergia1.setText(String.valueOf(p1.getEnergia()));
 		this.txtDefensa1.setText(String.valueOf(p1.getDefensa()));
@@ -371,50 +374,45 @@ public class Combat extends JFrame {
 
 	private void ataque() throws ApplicationException {
 		try {
-			if (this.spnEnergiaAtaque1.isEnabled()==true){
-				int energia = (int)(this.spnEnergiaAtaque1.getValue());
-				if(this.getPer1().getEnergia()>=energia){
+			if (this.spnEnergiaAtaque1.isEnabled()==true){ //atacante = jugador 1
+				int energia = (int)(this.spnEnergiaAtaque1.getValue()); //obtengo el valor ingresado
+				if(this.getPer1().getEnergia()>=energia && energia>0){ //si el personaje tiene energia suficiente
 					this.spnEnergiaAtaque1.setEnabled(false);
 					this.spnEnergiaAtaque2.setEnabled(true);
-					ctrlPartida.ataque(energia,this.getPer1(),this.getPer2());	
-					
+					//llamo al metodo ataque del controlador
+					ctrlPartida.ataque(energia,this.getPer1(),this.getPer2());				
 				}else{
-					notificar("La energia ingresada debe ser menor a " + this.getPer1().getEnergia());					
+					notificar("La energia ingresada debe ser un valor entre 0 y  " + this.getPer1().getEnergia());					
 				}
-			}else{
-				int energia = (int)(this.spnEnergiaAtaque2.getValue());
-				if(this.getPer2().getEnergia()>=energia){
+			}else{ //atacante = jugador 2
+				int energia = (int)(this.spnEnergiaAtaque2.getValue()); 
+				if(this.getPer2().getEnergia()>=energia && energia>0){
 					this.spnEnergiaAtaque2.setEnabled(false);
 					this.spnEnergiaAtaque1.setEnabled(true);					
-					ctrlPartida.ataque(energia,this.getPer2(),this.getPer1());	
-					
-					
+					ctrlPartida.ataque(energia,this.getPer2(),this.getPer1());						
 				}else{
-					notificar("La energia ingresada debe ser menor a " + this.getPer2().getEnergia());					
-				}
-							
+					notificar("La energia ingresada debe ser un valor entre 0 y   " + this.getPer2().getEnergia());					
+				}							
 			}
 		} catch (ApplicationException e) {
 			notificar(e.getMessage());
-		}finally{
-			
-			this.actualizarDatos();
-		}
-				
+		}finally{			
+			this.actualizarDatos(); 
+		}				
 	}
-	public void defensa(){
-		
+	
+	public void defensa(){		
 		try {
-			if (this.spnEnergiaAtaque1.isEnabled()==true){
-				this.spnEnergiaAtaque1.setEnabled(false);
+			if (this.spnEnergiaAtaque1.isEnabled()==true){ //es el turno del juagdor 1
+				this.spnEnergiaAtaque1.setEnabled(false);//cambia el turno
 				this.spnEnergiaAtaque2.setEnabled(true);
+				//llama al controlador
 				ctrlPartida.defensa(this.getPer1());
 				
-			}else{
-				this.spnEnergiaAtaque2.setEnabled(false);
-				this.spnEnergiaAtaque1.setEnabled(true);
+			}else{ //es el turno del jugador 2				
+				this.spnEnergiaAtaque2.setEnabled(false);//cambia el turno
+				this.spnEnergiaAtaque1.setEnabled(true);	
 				ctrlPartida.defensa(this.getPer2());			
-				
 			}
 		} catch (ApplicationException e) {
 			
@@ -424,21 +422,37 @@ public class Combat extends JFrame {
 		}
 	}
 	public void actualizarDatos(){
-		
+
+		// valido la energia para habilitar y deshabilitar el boton de ataque
+		if(this.spnEnergiaAtaque1.isEnabled() && this.getPer1().getEnergia()<=0){
+			this.btnAtaque.setEnabled(false);
+		}else if (this.spnEnergiaAtaque1.isEnabled() && this.getPer1().getEnergia()>0){
+			this.btnAtaque.setEnabled(true);
+			
+		}
+		if(this.spnEnergiaAtaque2.isEnabled() && this.getPer2().getEnergia()<=0){
+			this.btnAtaque.setEnabled(false);
+		}else if (this.spnEnergiaAtaque2.isEnabled() && this.getPer2().getEnergia()>0){
+			this.btnAtaque.setEnabled(true);		
+		}		
+		//mapeo el formulario con los nuevos valores
 		this.txtVida1.setText(String.valueOf(this.getPer1().getVida()));
 		this.txtEnergia1.setText(String.valueOf(this.getPer1().getEnergia()));
-		
 		this.txtVida2.setText(String.valueOf(this.getPer2().getVida()));
 		this.txtEnergia2.setText(String.valueOf(this.getPer2().getEnergia()));
 		
+		//me fijo si hay ganador
+		
+			//si pierde el personaje uno -->
 		if(this.getPer1().getVida()<=0){
 			try {
+				//deshabilito los botones de ataque y defensa
 				this.btnAtaque.setEnabled(false);
 				this.btnDefensa.setEnabled(false);
 				
-				this.btnInicio.setEnabled(true);
+				this.btnInicio.setEnabled(true); // comienza el juego de cero
 				this.limpiarCampos();
-				ctrlPartida.premio(this.getPer2());
+				ctrlPartida.premio(this.getPer2()); // llamo al controlador y le envio al ganador para que sumarle los puntos
 				
 				
 			} catch (ApplicationException e) {
@@ -446,6 +460,7 @@ public class Combat extends JFrame {
 				notificar(e.getMessage());
 			}
 		}
+			//si pierde el personaje dos -->
 		if(this.getPer2().getVida()<=0){
 			try {
 				this.btnAtaque.setEnabled(false);
@@ -461,9 +476,6 @@ public class Combat extends JFrame {
 				notificar(e.getMessage());
 			}
 		}
-		
-		
-
 	}
 	
 	public void limpiarCampos(){
@@ -477,7 +489,6 @@ public class Combat extends JFrame {
 		this.spnEnergiaAtaque1.setValue(0);
 		this.spnEnergiaAtaque1.setEnabled(false);
 		
-		
 		this.txtDefensa2.setText(" ");
 		this.txtEnergia2.setText(" ");
 		this.txtEvasion2.setText(" ");
@@ -486,13 +497,9 @@ public class Combat extends JFrame {
 		this.txtVida2.setText(" ");
 		this.spnEnergiaAtaque2.setValue(0);
 		this.spnEnergiaAtaque2.setEnabled(false);
-
-		
-		
+	
 	}
-	
-	
-	
+
 	public void notificar(String mensaje) {
 		JOptionPane.showMessageDialog(this.frame, mensaje);
 	}

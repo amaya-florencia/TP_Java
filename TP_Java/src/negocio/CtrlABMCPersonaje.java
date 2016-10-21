@@ -1,45 +1,45 @@
 package negocio;
 
-import java.util.ArrayList;
-import entidades.*;
-import java.sql.ResultSet;
 
+import entidades.*;
 import util.ApplicationException;
 import data.DataPersonaje;
 
 public class CtrlABMCPersonaje {
 
-	private ArrayList<Personaje> personajes;
-	private DataPersonaje dataPer;
-	private Personaje per;
-	private int puntosIniciales = 200;
-	String [] nombres = null;
 	
+	private DataPersonaje dataPer;
+
+
 	public CtrlABMCPersonaje(){
-		personajes = new ArrayList<Personaje>();
-		dataPer=new DataPersonaje();
+	
+		dataPer=new DataPersonaje(); //instancio la capa de datos
 	}
 
-	public ResultSet getResultSet() throws ApplicationException{
-		return dataPer.getResultSet();
-	}
+	
 	
 	public void agregar(Personaje p) throws ApplicationException {	
-		if(!validarNombre(p)){
-			p.setPuntosTotales(puntosIniciales);
+		if(!validarNombre(p)){ //valido que no haya un personaje con el mismo nombre
+			
 			int puntosAsignados = p.getDefensa()+p.getEnergia()+p.getEvasion()+p.getVida();
-			if(p.getPuntosTotales()>=puntosAsignados){
-				personajes.add(p);
+			
+			if(p.getPuntosTotales()>=puntosAsignados){//valido que los puntos asignados no superen a los puntos totales del personaje
+				if(p.getDefensa()>20){ //valido que no ingrese una defensa mayor a los 20 p
+					throw new ApplicationException("Los puntos de defensa deben ser menor o igual a 20");
+				}else if(p.getEvasion()>80){//valido que no ingrese una evasion mayor a los 80 p
+					throw new ApplicationException("Los puntos de evasion deben ser menor o igual a 80");
+				}
+				
 			}else {
 				throw new ApplicationException("La suma de los puntos asignados no debe ser mayor a "+ p.getPuntosTotales());
 			}
 		} else {
 			throw new ApplicationException("El personaje ya existe");
 		}
-		dataPer.add(p);
+		dataPer.add(p); // llamo al insert de la capa de datos
 	}
 	
-	private boolean validarNombre(Personaje p) {
+	private boolean validarNombre(Personaje p) { //valida existencia
 		boolean valida = true;
 		Personaje encontrado = dataPer.getPersonajeNombre(p.getNombrePersonaje());	
 		if (encontrado==null){
@@ -48,7 +48,7 @@ public class CtrlABMCPersonaje {
 		return valida;
 	}
 	
-	private boolean validarNombre(String nombre) {
+	private boolean validarNombre(String nombre) { //valida existencia al inicio del juego
 		boolean valida = true;
 		Personaje encontrado = dataPer.getPersonajeNombre(nombre);	
 		if (!(encontrado==null)){
@@ -60,10 +60,16 @@ public class CtrlABMCPersonaje {
 	}
 
 	public void update(Personaje p) throws ApplicationException{
-		if(this.validarNombre(p.getNombrePersonaje())){
+		if(this.validarNombre(p.getNombrePersonaje())){ //valida que exista 
 			int puntosAsignados = p.getDefensa()+p.getEnergia()+p.getEvasion()+p.getVida();
 			if(p.getPuntosTotales()>=puntosAsignados){
-			dataPer.update(p);	
+				if(p.getDefensa()>20){
+					throw new ApplicationException("Los puntos de defensa deben ser menor o igual a 20"); //valida valores
+				}else if(p.getEvasion()>80){
+					throw new ApplicationException("Los puntos de evasion deben ser menor o igual a 80");
+				}else{
+					dataPer.update(p); //llama al update de la capa de datos
+				}
 			}else{
 				throw new ApplicationException("La suma de los puntos asignados no debe ser mayor a "+ p.getPuntosTotales());
 			}
@@ -74,12 +80,12 @@ public class CtrlABMCPersonaje {
 	}	
 	
 	public void eliminar(Personaje p)throws ApplicationException{
-		dataPer.delete(p);		
+		dataPer.delete(p);		//llama al delete de la capa de datos
 	}
 	
 	public Personaje buscarPersonajePorNombre(String nombreIngresado)throws ApplicationException{
 		
-			Personaje per = dataPer.getPersonajeNombre(nombreIngresado);
+			Personaje per = dataPer.getPersonajeNombre(nombreIngresado); 
 			if(per == null){
 				throw new ApplicationException("El personaje " + nombreIngresado + " no existe");
 			}
@@ -87,9 +93,6 @@ public class CtrlABMCPersonaje {
 		return per;
 	}
 
-	public ArrayList<Personaje> getAll() throws ApplicationException {		
-		return dataPer.getAll();
-	}
-
+	
 	
 }
