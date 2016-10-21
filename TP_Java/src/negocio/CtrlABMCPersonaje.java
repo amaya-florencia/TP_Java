@@ -2,25 +2,29 @@ package negocio;
 
 import java.util.ArrayList;
 import entidades.*;
-import java.io.InvalidClassException;
+import java.sql.ResultSet;
+
 import util.ApplicationException;
 import data.DataPersonaje;
 
 public class CtrlABMCPersonaje {
 
 	private ArrayList<Personaje> personajes;
-	private data.DataPersonaje dataPer;
+	private DataPersonaje dataPer;
+	private Personaje per;
 	private int puntosIniciales = 200;
+	String [] nombres = null;
 	
 	public CtrlABMCPersonaje(){
 		personajes = new ArrayList<Personaje>();
 		dataPer=new DataPersonaje();
 	}
-	
 
+	public ResultSet getResultSet() throws ApplicationException{
+		return dataPer.getResultSet();
+	}
 	
-	public void agregar(Personaje p) throws ApplicationException {
-		
+	public void agregar(Personaje p) throws ApplicationException {	
 		if(validarNombre(p)){
 			p.setPuntosTotales(puntosIniciales);
 			int puntosAsignados = p.getDefensa()+p.getEnergia()+p.getEvasion()+p.getVida();
@@ -29,19 +33,27 @@ public class CtrlABMCPersonaje {
 			}else {
 				throw new ApplicationException("La suma de los puntos asignados no debe ser mayor a "+ p.getPuntosTotales());
 			}
-			
 		} else {
 			throw new ApplicationException("El personaje ya existe");
 		}
 		dataPer.add(p);
-		
-		
 	}
 	
 	private boolean validarNombre(Personaje p) {
 		boolean valida = true;
 		Personaje encontrado = dataPer.getPersonajeNombre(p.getNombrePersonaje());	
-		if (encontrado==null ){
+		if (!(encontrado==null)){
+			valida=true;
+		}else{
+			valida=false;
+		}
+		return valida;
+	}
+	
+	private boolean validarNombre(String nombre) {
+		boolean valida = true;
+		Personaje encontrado = dataPer.getPersonajeNombre(nombre);	
+		if (!(encontrado==null)){
 			valida=true;
 		}else{
 			valida=false;
@@ -50,30 +62,25 @@ public class CtrlABMCPersonaje {
 	}
 
 	public void update(Personaje p) throws ApplicationException{
-		Personaje personajeModificado = new Personaje();
-		personajeModificado= dataPer.getPersonajeNombre(p.getNombrePersonaje());
-		personajeModificado.setNombrePersonaje(p.getNombrePersonaje());
-		personajeModificado.setVida(p.getVida());
-		personajeModificado.setEnergia(p.getEnergia());
-		personajeModificado.setEvasion(p.getEvasion());
-		personajeModificado.setDefensa(p.getDefensa());
-		dataPer.update(personajeModificado);
-		
+			dataPer.update(p);	
 	}	
 	
 	public void eliminar(Personaje p){
-		//personajes.remove(p);
-		dataPer.delete(p);
-		
+		dataPer.delete(p);		
 	}
 	
-	public Personaje buscarPersonajePorNombre(String nombreIngresado){
-		
-		return dataPer.getPersonajeNombre(nombreIngresado);
-		
+	public Personaje buscarPersonajePorNombre(String nombreIngresado)throws ApplicationException{
+		if (this.validarNombre(nombreIngresado))	{
+			Personaje per = dataPer.getPersonajeNombre(nombreIngresado);
+		}else{
+			throw new ApplicationException("El personaje no existe");
+		}
+		return per;
 	}
-	public ArrayList<Personaje> getAll(){
+
+	public ArrayList<Personaje> getAll() throws ApplicationException {		
 		return dataPer.getAll();
 	}
+
 	
 }

@@ -1,5 +1,6 @@
 package negocio;
 
+
 import java.util.ArrayList;
 import java.util.Random;
 import entidades.*;
@@ -10,80 +11,114 @@ import data.DataPersonaje;
 public class CtrlPartida {
 	
 	
-	Personaje pAtaque = new Personaje();
-	Personaje pDefensa = new Personaje();
-	Personaje personaje1 = new Personaje();
-	Personaje personaje2 = new Personaje();
-	
+	private Personaje personaje1,personaje2;
+	private DataPersonaje dataPer;
+	private int turno;
+	private int vidaOriginal1;
+	private int vidaOriginal2;
+	private int energiaOriginal1;
+	private int energiaOriginal2;
+
+	public int getVidaOriginal1() {
+		return vidaOriginal1;
+	}
+	public void setVidaOriginal1(int vidaOriginal1) {
+		this.vidaOriginal1 = vidaOriginal1;
+	}
+	public int getVidaOriginal2() {
+		return vidaOriginal2;
+	}
+	public void setVidaOriginal2(int vidaOriginal2) {
+		this.vidaOriginal2 = vidaOriginal2;
+	}
+	public int getEnergiaOriginal1() {
+		return energiaOriginal1;
+	}
+	public void setEnergiaOriginal1(int energiaOriginal1) {
+		this.energiaOriginal1 = energiaOriginal1;
+	}
+	public int getEnergiaOriginal2() {
+		return energiaOriginal2;
+	}
+	public void setEnergiaOriginal2(int energiaOriginal2) {
+		this.energiaOriginal2 = energiaOriginal2;
+	}
+	public Personaje getPersonaje1() {
+		return personaje1;
+	}
+	public void setPersonaje1(Personaje personaje1) {
+		this.personaje1 = personaje1;
+	}
+	public Personaje getPersonaje2() {
+		return personaje2;
+	}
+	public void setPersonaje2(Personaje personaje2) {
+		this.personaje2 = personaje2;
+	}
 	public CtrlPartida(){
 		
+		dataPer = new DataPersonaje();
+		turno = 0;
+		personaje1 = null;
+		personaje2 = null;
 		
 	}
 	public CtrlPartida(Personaje per1,Personaje per2){
 		personaje1 = per1;
 		personaje2=per2;
-		int vida1=personaje1.getVida();
-		int vida2=personaje2.getVida();
-		int energia1=personaje1.getEnergia();
-		int energia2=personaje2.getEnergia();
+		this.setVidaOriginal1(personaje1.getVida());
+		this.setVidaOriginal2(personaje2.getVida());
+		this.setEnergiaOriginal1(personaje1.getVida());
+		this.setEnergiaOriginal2(personaje2.getVida());		
+	}
+	public void defensa(Personaje personajeActual) throws ApplicationException{
 		
-	}
-	public Personaje turno(Personaje personaje1,Personaje personaje2){
-		Random rnd = new Random();
-		int i= rnd.nextInt();
-		int j=rnd.nextInt();
-		if(i>j){
-			pAtaque = personaje1;			
-			pDefensa = personaje2;
-		}else{
-			  pAtaque = personaje2;
-			  pDefensa = personaje1;
-		}	
-		return pAtaque;
-	}
-	public Boolean ataque(int energiaAtaque) throws ApplicationException{
-		Boolean evade;
-		if (pAtaque.getEnergia()>energiaAtaque){
-			pAtaque.setEnergia(pAtaque.getEnergia()-energiaAtaque);						
-			evade = this.calcularEvasion(energiaAtaque);
-			
-			validaGanador();
-		}else{			
-			throw new ApplicationException("La energia de ataque debe ser menor que "+ pAtaque.getEnergia());
-		}	
-		
-		return evade;
-	}
-	public Boolean validaGanador() throws ApplicationException {
-		Boolean gana;
-		if (pDefensa.getVida()>0){
-			Personaje aux = pAtaque;
-			pAtaque= pDefensa;
-			pDefensa=aux;
-			gana = false;
-			//this.ataque(energiaAtaque);
-		}else{			
-			
-			if(pAtaque.getNombrePersonaje()==personaje1.getNombrePersonaje()){
-				personaje1.setPuntosTotales(pAtaque.getPuntosTotales()+10);
-			}else if (pAtaque.getNombrePersonaje()==personaje2.getNombrePersonaje()){
-				personaje2.setPuntosTotales(pAtaque.getPuntosTotales()+10);
+			if(personajeActual.getIdPersonaje()==personaje1.getIdPersonaje()){
+				personajeActual.setEnergia(this.getEnergiaOriginal1()*personajeActual.getDefensa()/100);
+				personajeActual.setVida(this.getVidaOriginal1()*personajeActual.getDefensa()/250);
+				this.setPersonaje1(personajeActual);
+			}else{
+				int i = this.getEnergiaOriginal2();
+				int j = personajeActual.getDefensa();
+				personajeActual.setEnergia(i *j /100);
+				personajeActual.setVida(this.getVidaOriginal2()*personajeActual.getDefensa()/250);
+				this.setPersonaje2(personajeActual);
 			}
-			throw new ApplicationException("El ganador es: " + pAtaque.getNombrePersonaje());
-			
-		}
-		return gana;
+				
+			throw new ApplicationException(personajeActual.getNombrePersonaje()+" recupera " + personajeActual.getEnergia() + " de energia y " 
+							+ personajeActual.getVida() + " de vida.");
+	
 		
 	}
-	public Boolean calcularEvasion(int energiaAtaque){
-		Boolean evade = false;
+	public void ataque(int energiaAtaque,Personaje atacante, Personaje defensor) throws ApplicationException{
+		
+		
+			atacante.setEnergia(atacante.getEnergia() - energiaAtaque);	
+			boolean evade =this.defensorEvade(energiaAtaque,defensor);
+			if(!evade){
+				
+				int vidaRestante = defensor.getVida() - energiaAtaque;
+				if (vidaRestante>0){					
+					defensor.setVida(vidaRestante);						
+					throw new ApplicationException("El ataque es efectivo!!"+ 
+								defensor.getNombrePersonaje()+"pierde "+energiaAtaque + "puntos de vida");
+	
+				}else{						
+						throw new ApplicationException("Felicitaciones! Has derrotado a "+defensor.getNombrePersonaje());						
+				}
+				}else{
+				throw new ApplicationException("Tu ataque ha sido evadido!"+ defensor.getNombrePersonaje()+"conserva sus puntos de vida ");
+			}
+		}	
+	
+	public boolean defensorEvade(int energiaAtaque,Personaje defensor){
+		boolean evade = false;
 		Random rnd = new Random();
-		Double i= rnd.nextDouble()*2+0;
-		if (i*100< pDefensa.getEvasion()){//evade ataque
-			pDefensa.setVida(pDefensa.getVida()-energiaAtaque);
+		Double i = rnd.nextDouble();
+		if (i*100 > defensor.getEvasion()){//evade ataque
+			defensor.setVida(defensor.getVida()-energiaAtaque);
 			evade = true;
 		}
 		return evade;
 	}
-
 }

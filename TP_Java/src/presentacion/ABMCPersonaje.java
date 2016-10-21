@@ -1,9 +1,9 @@
 package presentacion;
 
-import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -17,15 +17,17 @@ import java.awt.event.MouseEvent;
 import entidades.*;
 import negocio.*;
 import util.ApplicationException;
+
 import util.SuperLogger;
 import javax.swing.SpinnerNumberModel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.SwingConstants;
 
-public class ABMCPersonaje {
-	private CtrlABMCPersonaje ctrl;
+
+@SuppressWarnings("serial")
+public class ABMCPersonaje extends JInternalFrame {
 	
+	private CtrlABMCPersonaje ctrl;
 	private JFrame frame;
 	private JTextField txtIdPersonaje;
 	private JTextField txtNombre;
@@ -35,19 +37,11 @@ public class ABMCPersonaje {
 	private JSpinner spDefensa;
 	private JSpinner spEvasion;	
 
-	/**
-	 * Launch the application.
-	 */
-	
 	public ABMCPersonaje() {		
 		initialize();
-		ctrl = new CtrlABMCPersonaje();
-		frame.setVisible(true);
+		ctrl = new CtrlABMCPersonaje();		
 	}
-	/**
-	 * 	 * Initialize the contents of the frame.
 
-	 */
 	private void initialize() {
 		
 		frame = new JFrame();
@@ -55,6 +49,7 @@ public class ABMCPersonaje {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setBounds(100, 100, 418, 484);
 		frame.getContentPane().setLayout(null);
+		frame.setVisible(true);
 
 		
 		JLabel lblIdPersonaje = new JLabel("ID Personaje");
@@ -171,9 +166,7 @@ public class ABMCPersonaje {
 		p.setVida((int)spVida.getValue());	
 		p.setEnergia((int)spEnergia.getValue());
 		p.setDefensa((int)spDefensa.getValue());
-		p.setEvasion((int)spEvasion.getValue());
-		
-						
+		p.setEvasion((int)spEvasion.getValue());					
 		return p;
 	}
 	
@@ -184,8 +177,7 @@ public class ABMCPersonaje {
 		this.spEvasion.setValue(0);
 		this.spVida.setValue(0);	
 		
-	}
-	
+	}	
 	protected void agregar() {
 		if (datosValidos()){
 			try {
@@ -194,37 +186,37 @@ public class ABMCPersonaje {
 				notificar("Personaje creado con éxito");
 				MapearAFormulario(p);
 				limpiarCampos();
-			} catch (ApplicationException ae) {
+		  } catch (ApplicationException ae) {
 				notificar(ae.getMessage());
 			}
 		}		
 	}
-	
-
 	protected void modificar() {
 		if(datosValidos()){
-			Personaje p = MapearDeFormulario();
-			p.setIdPersonaje(Integer.parseInt(txtIdPersonaje.getText()));
-			p.setPuntosTotales(Integer.parseInt(txtPuntosTotales.getText()));
 			try {
+				Personaje p = MapearDeFormulario();
+				MapearAFormulario(p);
+				p.setIdPersonaje(Integer.parseInt(txtIdPersonaje.getText()));
+				p.setPuntosTotales(Integer.parseInt(txtPuntosTotales.getText()));
 				ctrl.update(p);
 				
 			} catch (ApplicationException ae) {
 				// TODO Auto-generated catch block
 				notificar(ae.getMessage());
-			}
-			
+			}			
+		}		
+	}
+	
+	private void buscarPersonajePorNombre() {		
+		try {
+			this.MapearAFormulario(ctrl.buscarPersonajePorNombre(this.MapearDeFormulario().getNombrePersonaje()));
+		} catch (ApplicationException e) {
+			// TODO Auto-generated catch block
+			notificar(e.getMessage());
 		}
-		
 	}
 	
-	private void buscarPersonajePorNombre() {
-		
-		this.MapearAFormulario(ctrl.buscarPersonajePorNombre(this.MapearDeFormulario().getNombrePersonaje()));
-	}
-	
-	public void MapearAFormulario(Personaje p) {
-		
+	public void MapearAFormulario(Personaje p) {		
 		if(p.getIdPersonaje()>0) txtIdPersonaje.setText(String.valueOf(p.getIdPersonaje()));		
 		this.txtNombre.setText(p.getNombrePersonaje());
 		this.spVida.setValue(p.getVida());
