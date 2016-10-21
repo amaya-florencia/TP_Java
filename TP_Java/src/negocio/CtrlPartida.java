@@ -12,12 +12,13 @@ public class CtrlPartida {
 	
 	
 	private Personaje personaje1,personaje2;
-	private DataPersonaje dataPer;
-	private int turno;
+	private CtrlABMCPersonaje ctrlPersonaje;
+	
 	private int vidaOriginal1;
 	private int vidaOriginal2;
 	private int energiaOriginal1;
 	private int energiaOriginal2;
+	private int puntosGanador = 20;
 
 	public int getVidaOriginal1() {
 		return vidaOriginal1;
@@ -57,8 +58,8 @@ public class CtrlPartida {
 	}
 	public CtrlPartida(){
 		
-		dataPer = new DataPersonaje();
-		turno = 0;
+		
+	
 		personaje1 = null;
 		personaje2 = null;
 		
@@ -66,22 +67,47 @@ public class CtrlPartida {
 	public CtrlPartida(Personaje per1,Personaje per2){
 		personaje1 = per1;
 		personaje2=per2;
+		
 		this.setVidaOriginal1(personaje1.getVida());
 		this.setVidaOriginal2(personaje2.getVida());
 		this.setEnergiaOriginal1(personaje1.getVida());
-		this.setEnergiaOriginal2(personaje2.getVida());		
+		this.setEnergiaOriginal2(personaje2.getVida());	
+		
 	}
 	public void defensa(Personaje personajeActual) throws ApplicationException{
 		
 			if(personajeActual.getIdPersonaje()==personaje1.getIdPersonaje()){
-				personajeActual.setEnergia(this.getEnergiaOriginal1()*personajeActual.getDefensa()/100);
-				personajeActual.setVida(this.getVidaOriginal1()*personajeActual.getDefensa()/250);
+				int energiaRecuperada = this.getEnergiaOriginal1()*personajeActual.getDefensa()/100;
+				int vidaRecuperada = this.getVidaOriginal1()*personajeActual.getDefensa()/250;
+				
+				if(energiaRecuperada + personajeActual.getEnergia() > this.getEnergiaOriginal1()){
+					personajeActual.setEnergia(this.getEnergiaOriginal1());
+				}else{
+					personajeActual.setEnergia(energiaRecuperada + personajeActual.getEnergia());
+				}
+				
+				if(vidaRecuperada +  personajeActual.getVida() > this.getVidaOriginal1()){
+					personajeActual.setVida(this.getVidaOriginal1());
+				}else{
+					personajeActual.setVida(vidaRecuperada + personajeActual.getVida());
+				}			
 				this.setPersonaje1(personajeActual);
+				
 			}else{
-				int i = this.getEnergiaOriginal2();
-				int j = personajeActual.getDefensa();
-				personajeActual.setEnergia(i *j /100);
-				personajeActual.setVida(this.getVidaOriginal2()*personajeActual.getDefensa()/250);
+				int energiaRecuperada = this.getEnergiaOriginal2()*personajeActual.getDefensa()/100;
+				int vidaRecuperada = this.getVidaOriginal2()*personajeActual.getDefensa()/250;
+				
+				if(energiaRecuperada +  personajeActual.getEnergia() > this.getEnergiaOriginal2()){
+					personajeActual.setEnergia(this.getEnergiaOriginal2());
+				}else{
+					personajeActual.setEnergia(energiaRecuperada + personajeActual.getEnergia());
+				}
+				
+				if(vidaRecuperada +  personajeActual.getVida() > this.getVidaOriginal2()){
+					personajeActual.setVida(this.getVidaOriginal2());
+				}else{
+					personajeActual.setVida(vidaRecuperada + personajeActual.getVida());
+				}
 				this.setPersonaje2(personajeActual);
 			}
 				
@@ -98,25 +124,40 @@ public class CtrlPartida {
 			if(!evade){
 				
 				int vidaRestante = defensor.getVida() - energiaAtaque;
-				if (vidaRestante>0){					
+				if (vidaRestante > 0){					
 					defensor.setVida(vidaRestante);						
-					throw new ApplicationException("El ataque es efectivo!!"+ 
-								defensor.getNombrePersonaje()+"pierde "+energiaAtaque + "puntos de vida");
+					throw new ApplicationException("El ataque es efectivo!!  "+ 
+								defensor.getNombrePersonaje()+"pierde "+energiaAtaque + "  puntos de vida");
 	
-				}else{						
+				}else{					
 						throw new ApplicationException("Felicitaciones! Has derrotado a "+defensor.getNombrePersonaje());						
 				}
 				}else{
-				throw new ApplicationException("Tu ataque ha sido evadido!"+ defensor.getNombrePersonaje()+"conserva sus puntos de vida ");
+				throw new ApplicationException("Tu ataque ha sido evadido!  "+ defensor.getNombrePersonaje()+" conserva sus puntos de vida ");
 			}
 		}	
+	public void premio(Personaje ganador) throws ApplicationException{
+		if (ganador == this.getPersonaje1()){
+			ganador.setEnergia(this.getVidaOriginal1());
+			ganador.setVida(this.getVidaOriginal1());
+			ganador.setPuntosTotales(this.getPersonaje1().getPuntosTotales() + puntosGanador );
+		}else{
+			ganador.setEnergia(this.getVidaOriginal2());
+			ganador.setVida(this.getVidaOriginal2());
+			ganador.setPuntosTotales(this.getPersonaje2().getPuntosTotales() + puntosGanador );
+		}
+		CtrlABMCPersonaje ctrlPersonaje = new CtrlABMCPersonaje();
+		ctrlPersonaje.update(ganador);
+		throw new ApplicationException("Felicitaciones! "+ganador.getNombrePersonaje()+" has ganado 10 puntos");	
+	}
 	
 	public boolean defensorEvade(int energiaAtaque,Personaje defensor){
 		boolean evade = false;
 		Random rnd = new Random();
 		Double i = rnd.nextDouble();
-		if (i*100 > defensor.getEvasion()){//evade ataque
+		if (i*100 > defensor.getEvasion()){//no evade ataque			
 			defensor.setVida(defensor.getVida()-energiaAtaque);
+		}else{
 			evade = true;
 		}
 		return evade;

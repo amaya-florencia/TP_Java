@@ -94,6 +94,7 @@ public class ABMCPersonaje extends JInternalFrame {
 
 		
 		txtPuntosTotales = new JTextField();
+		txtPuntosTotales.setText("200");
 		txtPuntosTotales.setEditable(false);
 		txtPuntosTotales.setColumns(10);
 		txtPuntosTotales.setBounds(167, 287, 70, 15);
@@ -145,6 +146,11 @@ public class ABMCPersonaje extends JInternalFrame {
 		frame.getContentPane().add(btnBuscar);
 		
 		JButton btnEliminar = new JButton("Eliminar");
+		btnEliminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				eliminar();
+			}
+		});
 		btnEliminar.setBounds(291, 352, 89, 23);
 		frame.getContentPane().add(btnEliminar);
 		
@@ -166,7 +172,8 @@ public class ABMCPersonaje extends JInternalFrame {
 		p.setVida((int)spVida.getValue());	
 		p.setEnergia((int)spEnergia.getValue());
 		p.setDefensa((int)spDefensa.getValue());
-		p.setEvasion((int)spEvasion.getValue());					
+		p.setEvasion((int)spEvasion.getValue());	
+		p.setPuntosTotales(Integer.parseInt(txtPuntosTotales.getText()));
 		return p;
 	}
 	
@@ -182,15 +189,18 @@ public class ABMCPersonaje extends JInternalFrame {
 		if (datosValidos()){
 			try {
 				Personaje p = MapearDeFormulario();
+				this.txtPuntosTotales.setText("200");
 				ctrl.agregar(p);
-				notificar("Personaje creado con éxito");
 				MapearAFormulario(p);
+				notificar("Personaje creado con éxito");
+				
 				limpiarCampos();
 		  } catch (ApplicationException ae) {
 				notificar(ae.getMessage());
 			}
 		}		
 	}
+	
 	protected void modificar() {
 		if(datosValidos()){
 			try {
@@ -206,10 +216,23 @@ public class ABMCPersonaje extends JInternalFrame {
 			}			
 		}		
 	}
+	protected void eliminar() {
+		if (datosValidos()){
+			try {
+				Personaje p = MapearDeFormulario();
+				ctrl.eliminar(p);
+				notificar("Personaje eliminado con éxito");
+				
+				limpiarCampos();
+		  } catch (ApplicationException ae) {
+				notificar(ae.getMessage());
+			}
+		}		
+	}
 	
 	private void buscarPersonajePorNombre() {		
 		try {
-			this.MapearAFormulario(ctrl.buscarPersonajePorNombre(this.MapearDeFormulario().getNombrePersonaje()));
+			this.MapearAFormulario(ctrl.buscarPersonajePorNombre(this.txtNombre.getText()));
 		} catch (ApplicationException e) {
 			// TODO Auto-generated catch block
 			notificar(e.getMessage());

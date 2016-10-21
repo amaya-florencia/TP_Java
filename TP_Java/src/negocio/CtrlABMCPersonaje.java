@@ -25,7 +25,7 @@ public class CtrlABMCPersonaje {
 	}
 	
 	public void agregar(Personaje p) throws ApplicationException {	
-		if(validarNombre(p)){
+		if(!validarNombre(p)){
 			p.setPuntosTotales(puntosIniciales);
 			int puntosAsignados = p.getDefensa()+p.getEnergia()+p.getEvasion()+p.getVida();
 			if(p.getPuntosTotales()>=puntosAsignados){
@@ -42,9 +42,7 @@ public class CtrlABMCPersonaje {
 	private boolean validarNombre(Personaje p) {
 		boolean valida = true;
 		Personaje encontrado = dataPer.getPersonajeNombre(p.getNombrePersonaje());	
-		if (!(encontrado==null)){
-			valida=true;
-		}else{
+		if (encontrado==null){
 			valida=false;
 		}
 		return valida;
@@ -65,16 +63,17 @@ public class CtrlABMCPersonaje {
 			dataPer.update(p);	
 	}	
 	
-	public void eliminar(Personaje p){
+	public void eliminar(Personaje p)throws ApplicationException{
 		dataPer.delete(p);		
 	}
 	
 	public Personaje buscarPersonajePorNombre(String nombreIngresado)throws ApplicationException{
-		if (this.validarNombre(nombreIngresado))	{
+		
 			Personaje per = dataPer.getPersonajeNombre(nombreIngresado);
-		}else{
-			throw new ApplicationException("El personaje no existe");
-		}
+			if(per == null){
+				throw new ApplicationException("El personaje " + nombreIngresado + " no existe");
+			}
+	
 		return per;
 	}
 

@@ -314,23 +314,6 @@ public class Combat extends JFrame {
 		);
 		frame.getContentPane().setLayout(groupLayout);
 	}
-	private void inicio() throws ApplicationException {
-		try {
-			Personaje per1= ctrlPersonaje.buscarPersonajePorNombre(this.txtNombre1.getText());		
-			Personaje per2= ctrlPersonaje.buscarPersonajePorNombre(this.txtNombre2.getText());	
-		} catch (ApplicationException e) {
-			notificar(e.getMessage());
-		}
-			this.mapearAFormulario(per1, per2);
-			this.setPer1(per1);
-			this.setPer2(per2);
-			ctrlPartida = new CtrlPartida(per1,per2);		
-			this.spnEnergiaAtaque1.setEnabled(true);	
-			this.btnAtaque.setEnabled(true);
-			this.btnDefensa.setEnabled(true);
-		
-
-	}
 	public Personaje getPer1() {
 		return per1;
 	}
@@ -344,6 +327,25 @@ public class Combat extends JFrame {
 	public void setPer2(Personaje per2) {
 		this.per2 = per2;
 	}
+	
+	private void inicio() throws ApplicationException {
+		try {
+			Personaje per1= ctrlPersonaje.buscarPersonajePorNombre(this.txtNombre1.getText());		
+			Personaje per2= ctrlPersonaje.buscarPersonajePorNombre(this.txtNombre2.getText());	
+			this.mapearAFormulario(per1, per2);
+			this.setPer1(per1);
+			this.setPer2(per2);
+			ctrlPartida = new CtrlPartida(per1,per2);	
+			this.btnInicio.setEnabled(false);
+			this.spnEnergiaAtaque1.setEnabled(true);	
+			this.btnAtaque.setEnabled(true);
+			this.btnDefensa.setEnabled(true);
+			
+		} catch (ApplicationException e) {
+			notificar(e.getMessage());
+		}
+	}
+
 
 	public void mapearAFormulario(Personaje p1,Personaje p2) {		
 		this.txtNombre1.setEditable(false);
@@ -367,7 +369,8 @@ public class Combat extends JFrame {
 				if(this.getPer1().getEnergia()>=energia){
 					this.spnEnergiaAtaque1.setEnabled(false);
 					this.spnEnergiaAtaque2.setEnabled(true);
-					ctrlPartida.ataque(energia,this.getPer1(),this.getPer2());					
+					ctrlPartida.ataque(energia,this.getPer1(),this.getPer2());	
+					ctrlPartida.premio(ctrlPartida.getPersonaje2());
 				}else{
 					notificar("La energia ingresada debe ser menor a " + this.getPer1().getEnergia());					
 				}
@@ -376,20 +379,72 @@ public class Combat extends JFrame {
 				if(this.getPer2().getEnergia()>=energia){
 					this.spnEnergiaAtaque2.setEnabled(false);
 					this.spnEnergiaAtaque1.setEnabled(true);					
-					ctrlPartida.ataque(energia,this.getPer2(),this.getPer1());					
+					ctrlPartida.ataque(energia,this.getPer2(),this.getPer1());	
+					ctrlPartida.premio(ctrlPartida.getPersonaje2());
+					
 				}else{
 					notificar("La energia ingresada debe ser menor a " + this.getPer2().getEnergia());					
 				}
-				this.actualizarDatos();				
+							
 			}
 		} catch (ApplicationException e) {
 			notificar(e.getMessage());
+		}finally{
+			
+			this.actualizarDatos();
 		}
 				
+	}
+	public void defensa(){
+		
+		try {
+			if (this.spnEnergiaAtaque1.isEnabled()==true){
+				this.spnEnergiaAtaque1.setEnabled(false);
+				this.spnEnergiaAtaque2.setEnabled(true);
+				ctrlPartida.defensa(this.getPer1());
+				
+			}else{
+				this.spnEnergiaAtaque2.setEnabled(false);
+				this.spnEnergiaAtaque1.setEnabled(true);
+				ctrlPartida.defensa(this.getPer2());			
+				
+			}
+		} catch (ApplicationException e) {
+			
+			notificar(e.getMessage());
+		}finally{
+			this.actualizarDatos();
+		}
 	}
 	public void actualizarDatos(){
 		Personaje p1 = ctrlPartida.getPersonaje1();
 		Personaje p2 = ctrlPartida.getPersonaje2();
+		
+		if(p1.getVida()<=0){
+			try {
+				ctrlPartida.premio(p2);
+				this.btnAtaque.setEnabled(false);
+				this.btnDefensa.setEnabled(false);
+				this.btnInicio.setText("Revancha");
+				this.limpiarCampos();
+				
+			} catch (ApplicationException e) {
+				// TODO Auto-generated catch block
+				notificar(e.getMessage());
+			}
+		}
+		if(p2.getVida()<=0){
+			try {
+				ctrlPartida.premio(p1);
+				this.btnAtaque.setEnabled(false);
+				this.btnDefensa.setEnabled(false);
+				this.btnInicio.setText("Revancha");
+				this.limpiarCampos();
+			} catch (ApplicationException e) {
+				// TODO Auto-generated catch block
+				notificar(e.getMessage());
+			}
+		}
 		
 		this.txtVida1.setText(String.valueOf(p1.getVida()));
 		this.txtEnergia1.setText(String.valueOf(p1.getEnergia()));
@@ -399,25 +454,26 @@ public class Combat extends JFrame {
 
 	}
 	
-	public void defensa(){
+	public void limpiarCampos(){
 		
-		try {
-			if (this.spnEnergiaAtaque1.isEnabled()==true){
-				this.spnEnergiaAtaque1.setEnabled(false);
-				ctrlPartida.defensa(this.getPer1());
-				this.txtEnergia1.setText(String.valueOf(ctrlPartida.getPersonaje1().getEnergia()));	
-				this.txtVida1.setText(String.valueOf(ctrlPartida.getPersonaje1().getVida()));	
-			}else{
-				this.spnEnergiaAtaque2.setEnabled(false);
-				ctrlPartida.defensa(this.getPer2());
-				this.txtEnergia2.setText(String.valueOf(ctrlPartida.getPersonaje2().getEnergia()));	
-				this.txtVida2.setText(String.valueOf(ctrlPartida.getPersonaje2().getVida()));	
-				
-			}
-		} catch (ApplicationException e) {
-			notificar(e.getMessage());
-		}
+		this.txtDefensa1.setText("");
+		this.txtEnergia1.setText("");
+		this.txtEvasion1.setText("");
+		this.txtNombre1.setText("");
+		this.txtVida1.setText("");
+		this.spnEnergiaAtaque1.setValue(0);
+		
+		this.txtDefensa2.setText("");
+		this.txtEnergia2.setText("");
+		this.txtEvasion2.setText("");
+		this.txtNombre2.setText("");
+		this.txtVida2.setText("");
+		this.spnEnergiaAtaque2.setValue(0);
+		
+		
 	}
+	
+	
 	
 	public void notificar(String mensaje) {
 		JOptionPane.showMessageDialog(this.frame, mensaje);
