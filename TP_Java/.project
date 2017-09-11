@@ -14,21 +14,10 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>lib/log4j-api-2.6.1.jar</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Desktop/log4j-api-2.6.1.jar</locationURI>
-		</link>
-		<link>
-			<name>lib/log4j-core-2.6.1.jar</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Desktop/log4j-core-2.6.1.jar</locationURI>
-		</link>
-		<link>
-			<name>lib/mysql-connector-java-5.1.35-bin.jar</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Downloads/mysql-connector-java-5.1.35-bin.jar</locationURI>
-		</link>
-	</linkedResources>
+	<variableList>
+		<variable>
+			<name>copy_PARENT</name>
+			<value>$%7BPARENT-3-ECLIPSE_HOME%7D</value>
+		</variable>
+	</variableList>
 </projectDescription>
